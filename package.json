@@ -1,0 +1,17 @@
+{
+  "name": "hairpin-kaiheila",
+  "version": "0.0.1",
+  "main": "app.ts",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node ."
+  },
+  "dependencies": {
+    "kaiheila-bot-root": "^0.2.8",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
