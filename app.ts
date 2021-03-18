@@ -11,6 +11,11 @@ import { KaiheilaBot as Bot, MessageType, TextMessage } from 'kaiheila-bot-root'
 const guildId = '2753609088608169'
 const developChannel = '2937081174021544'
 
+const sunRoleId = 157665
+const settingSunRoleId = 160445
+
+const yirenUserId = '3929712312'
+
 var bot = new Bot({
   mode: 'websocket',
   token: process.env.TOKEN,
@@ -65,23 +70,27 @@ bot.on('textMessage', (e: TextMessage) => {
       break
     case '.toggle_sun':
       if (157627 !in e.author.roles) { return }
-      bot.API.guildRole.index(guildId).then((roles) => {
-        const sunRole = roles.find((p) => p.roleId === 157665)
-        if (sunRole) {
-          sunRole.hoist = sunRole.hoist === 0 ? 1 : 0
+      bot.API.guild.userList(guildId).then((users) => {
+        const yiren = users.items.find(p => p.id === yirenUserId)
+        if (yiren) {
+          if (yiren.roles?.find(p => p === sunRoleId)) {
+            bot.API.guildRole.grant(guildId, yirenUserId, settingSunRoleId).then((_) => {
+              bot.API.guildRole.revoke(guildId, yirenUserId, sunRoleId).then((_) => {
+                bot.API.message.create(MessageType.text, e.channelId, '太阳升起了')
+              })
+            })
+          } else if (yiren.roles?.find(p => p === settingSunRoleId)) {
+            bot.API.guildRole.grant(guildId, yirenUserId, sunRoleId).then((_) => {
+              bot.API.guildRole.revoke(guildId, yirenUserId, settingSunRoleId).then((_) => {
+                bot.API.message.create(MessageType.text, e.channelId, '太阳落山了')
+              })
+            })
+          } else {
+            bot.API.guildRole.grant(guildId, yirenUserId, sunRoleId).then((_) => {
+              bot.API.message.create(MessageType.text, e.channelId, '太阳升起了')
+            })
+          }
         }
-        bot.post('v3/guild-role/update', {
-          guild_id: guildId,
-          name: sunRole.name,
-          color: sunRole.color,
-          role_id: sunRole.roleId,
-          hoist: sunRole.hoist,
-          mentionable: sunRole.mentionable,
-          permissions: sunRole.permissions,
-        })
-        bot.API.message.create(MessageType.text, e.channelId, sunRole.hoist === 0 ? '太阳落山了' : '太阳升起了').then((msg) => {
-          bot.API.message.delete(e.msgId)
-        })
       })
       break
   }
