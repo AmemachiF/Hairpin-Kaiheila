@@ -76,18 +76,24 @@ bot.on('textMessage', (e: TextMessage) => {
           if (yiren.roles?.find(p => p === sunRoleId)) {
             bot.API.guildRole.grant(guildId, yirenUserId, settingSunRoleId).then((_) => {
               bot.API.guildRole.revoke(guildId, yirenUserId, sunRoleId).then((_) => {
-                bot.API.message.create(MessageType.text, e.channelId, '太阳升起了')
+                bot.API.message.create(MessageType.text, e.channelId, '太阳落山了').then((_) => {
+                  bot.API.message.delete(e.msgId)
+                })
               })
             })
           } else if (yiren.roles?.find(p => p === settingSunRoleId)) {
             bot.API.guildRole.grant(guildId, yirenUserId, sunRoleId).then((_) => {
               bot.API.guildRole.revoke(guildId, yirenUserId, settingSunRoleId).then((_) => {
-                bot.API.message.create(MessageType.text, e.channelId, '太阳落山了')
+                bot.API.message.create(MessageType.text, e.channelId, '太阳升起了').then((_) => {
+                  bot.API.message.delete(e.msgId)
+                })
               })
             })
           } else {
             bot.API.guildRole.grant(guildId, yirenUserId, sunRoleId).then((_) => {
-              bot.API.message.create(MessageType.text, e.channelId, '太阳升起了')
+              bot.API.message.create(MessageType.text, e.channelId, '太阳升起了').then((_) => {
+                bot.API.message.delete(e.msgId)
+              })
             })
           }
         }
